@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Java Hello World</title>
+		<script src="jquery-3.5.0.min.js"></script>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script>
+            function loaddata()
+			{
+                $.get("GetText", function(responseText)
+				{
+                    $("#hellodiv").text(responseText);
+                });
+            };
+        </script>
+    </head>
+    <body onload="loaddata()">
+        <h1 id="hellodiv">Waiting for servlet...</h1>
+    </body>
+</html>

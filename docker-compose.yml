@@ -1,0 +1,23 @@
+# this is the docker compose version
+version: '3.0'
+
+services:
+    mbatchsa_service:
+        # use existing default network
+        network_mode: bridge
+        # restart this container if it crashes
+        restart: always
+        build:
+            # build from directory in context and Dockerfile
+            context: .
+            dockerfile: Dockerfile
+        container_name: bcb_build_docs_cont
+        # update :latest to desired version
+        image: bcb_build_docs:latest
+        volumes:
+            # outside access for data files outside:inside
+            # not needed for example builds
+            # - /my/local/dir:/BEA/MBATCH
+            # read-only file to set time to same in image as on server
+            - /etc/localtime:/etc/localtime:ro
+        tty: true

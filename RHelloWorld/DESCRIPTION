@@ -1,0 +1,11 @@
+Package: RHelloWorld
+Type: Package
+Title: R Hello World (meaningless help world application)
+Version: 0.1.0
+Author: Tod Casasent
+Maintainer: Tod Casasent <tdcasasent@mdanderson.org>
+Description: Hellow World package to illustrate tests, checks, and building package.
+License: GPL (>=2)
+URL: https://github.com/MD-Anderson-Bioinformatics
+Encoding: UTF-8
+LazyData: true

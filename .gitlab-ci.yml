@@ -1,0 +1,84 @@
+## BCBBuildDocs CI
+
+variables:
+  # do not clone history, just get leaves
+  GIT_DEPTH: 1
+  # do not do SSL validation
+  GIT_SSL_NO_VERIFY: 1
+
+stages:
+  # stages are run in this order, by the runners assigned to them 
+  # registered from the command line, using the tags keyword to 
+  # assign docker and shell executors
+  # 1. compiles and runs unit tests
+  - compile_and_test
+  # 2. builds Docker images and pushes to repo
+  - build_images
+
+# if a script gives a non-zero exit code, CI sees it as a failure
+# current directory is base of cloned repo
+
+# --executor docker uses an image registered in the GitLab GUI.
+# does not need image tag.
+compile_and_test_job:
+  # this tells job to only run on tags of the form BCB_*
+  # tag used is available in CI_COMMIT_REF_NAME
+  only:
+    - /^BCB_.*$/
+  # tags here refers to docker/shell tags on runners
+  tags:
+    - docker
+  stage: compile_and_test
+  # everything under script is run in the Docker container
+  # fetch/clone is into /builds/BatchEffects_clean/BatchEffectsPackage
+  script:
+    - hostname
+    - pwd
+    - whoami
+    - id
+    - env
+    - echo $0
+    - CUR_DUR_DQS=`pwd`
+    - echo ${CUR_DUR_DQS}
+    - ls -l ${CUR_DUR_DQS}
+    - ls -l ${CUR_DUR_DQS}/ci_cd_scripts
+    # run build script
+    - ${CUR_DUR_DQS}/ci_cd_scripts/build_apps.bash "${CUR_DUR_DQS}"
+    # copy files to artifact directory
+    - mkdir ${CUR_DUR_DQS}/art_bcbbuilddocs
+    - ${CUR_DUR_DQS}/ci_cd_scripts/build_copy.bash "${CUR_DUR_DQS}" "${CUR_DUR_DQS}/art_bcbbuilddocs"
+  # use "top-level for repo" directory names for artifact
+  # and GitLab CI automatically copies those directories to next job
+  artifacts:
+    name: ${CI_COMMIT_REF_NAME}
+    paths:
+      - art_bcbbuilddocs
+    expire_in: 1 week
+
+# artifacts (only thing needed here) are carried over
+build_images_job:
+  # this tells job to only run on tags of the form BCB_*
+  # tag used is available in CI_COMMIT_REF_NAME
+  only:
+    - /^BCB_.*$/
+  # tags here refers to docker/shell tags on runners
+  tags:
+    - shell
+  stage: build_images
+  script:
+    - hostname
+    - pwd
+    - whoami
+    - id
+    - env
+    - echo $0
+    - CUR_DUR_DQS=`pwd`
+    - echo ${CUR_DUR_DQS}
+    - ls -l ${CUR_DUR_DQS}
+    # build MBatch image
+    - ${CUR_DUR_DQS}/ci_cd_scripts/build_images.bash "${CUR_DUR_DQS}"
+  after_script:
+    - CUR_DUR_DQS=`pwd`
+    - echo ${CUR_DUR_DQS}
+    - ${CUR_DUR_DQS}/ci_cd_scripts/clear_images.bash
+
