@@ -4,7 +4,7 @@ This is for educational and research purposes only.
 
 The Dockerfile contains the install for R (R-java-devel). The R-java-devel includes development tools for R (such as those for building packages) and is built with support for using Java via rJava and the "R javareconf" command, explained below.
 
-The Dockerfile uses a Fedora 38 base. (Fedora is stable and upstream of CentOS and RHEL.) Because our project requires Tomcat, Java, Python, and R at different times and combination, we install these applications into a base image rather than using pre-builts.
+The Dockerfile uses a Fedora 40 base. (Fedora is stable and upstream of CentOS and RHEL.) Because our project requires Tomcat, Java, Python, and R at different times and combination, we install these applications into a base image rather than using pre-builts.
 
 Search the Dockerfile for "Install/Setup R 4.x+ plus OS packages for MBatch". Also note that the Java install done before this step is also required.
 
@@ -34,7 +34,7 @@ When building HTML/PDF as part of a package install (done in both the build and 
 ```
 # Install subset of TexLive
 RUN dnf upgrade -y && \
-    dnf install -y texlive-2022 texlive-framed && \
+    dnf install -y texlive-2023 texlive-framed && \
     dnf upgrade -y && \
     dnf clean all
 ```

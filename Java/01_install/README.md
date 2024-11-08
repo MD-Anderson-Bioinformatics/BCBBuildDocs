@@ -4,7 +4,7 @@ This is for educational and research purposes only.
 
 The Dockerfile contains the install for Java, sets up the bash environment for Java usage by the OS and applications that depend on it, such as R.
 
-The Dockerfile uses a Fedora 38 base. (Fedora is stable and upstream of CentOS and RHEL.) Because our project requires Tomcat, Java, Python, and R at different times and combination, we install these applications into a base image rather than using pre-builts.
+The Dockerfile uses a Fedora 40 base. (Fedora is stable and upstream of CentOS and RHEL.) Because our project requires Tomcat, Java, Python, and R at different times and combination, we install these applications into a base image rather than using pre-builts.
 
 Search the Dockerfile for "Install/Setup Java 17 with variables".
 

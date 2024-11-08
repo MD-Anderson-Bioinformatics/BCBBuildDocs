@@ -1,4 +1,4 @@
-FROM fedora:38
+FROM fedora:40
 
 ## use the docker compose file to build
 
@@ -8,10 +8,10 @@ FROM fedora:38
 
 LABEL edu.mda.bcb.name="bcb_build_docs" \
       edu.mda.bcb.sub="bde" \
-      edu.mda.bcb.coj.version="2023-07-19-1600" \
+      edu.mda.bcb.coj.version="2024-07-03-0930" \
       edu.mda.bcb.coj.Rversion="4.x" \
       edu.mda.bcb.coj.Javaversion="17" \
-      edu.mda.bcb.coj.Linuxversion="Fedora 38"
+      edu.mda.bcb.coj.Linuxversion="Fedora 40"
 
 ####
 #### generic setup for OS
@@ -74,7 +74,7 @@ RUN dnf upgrade -y && \
 
 # Install subset of TexLive
 RUN dnf upgrade -y && \
-    dnf install -y texlive-2022 texlive-framed && \
+    dnf install -y texlive-2023 texlive-framed && \
     dnf upgrade -y && \
     dnf clean all
 
@@ -106,14 +106,17 @@ RUN R CMD javareconf
 
 # bcbuser is not created yet, so make dir, and chown/cmod
 
+
+# Please note, we use the Conda-Forge install of conda via MiniForge. This setup uses only the conda-forge channel
+# to avoid using the licensed Anaconda Inc channels.
 RUN mkdir /home/bcbuser && \
     cd /home/bcbuser && \
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+    curl -L -O https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh && \
     mkdir /home/bcbuser/conda && \
-    bash /home/bcbuser/Miniconda3-latest-Linux-x86_64.sh -b -p /home/bcbuser/conda -f && \
+    bash /home/bcbuser/Miniforge3-Linux-x86_64.sh -b -p /home/bcbuser/conda -f && \
     . /home/bcbuser/conda/bin/activate && \
     conda init && \
-    conda update -y conda && \
+    conda update -y -n base -c conda-forge conda && \
     conda init bash && \
     chown -R :bcb_base_group /home/bcbuser && \
     chmod -R 775 /home/bcbuser
@@ -131,24 +134,31 @@ ENV LD_LIBRARY_PATH=/home/bcbuser/conda/envs/gendev/lib:$LD_LIBRARY_PATH
 RUN . /home/bcbuser/conda/bin/activate && \
     conda init && \
     conda activate /home/bcbuser/conda/envs/gendev && \
-    conda install -y -c conda-forge python==3.11.* && \
-    conda install -y -c conda-forge pyinstaller && \
-    conda install -y -c conda-forge flask && \
-    conda install -y -c conda-forge waitress && \
-    conda install -y -c conda-forge pylint && \
-    conda install -y -c conda-forge setuptools && \
+    conda install -y -c conda-forge python==3.12 && \
+    conda install -y -c conda-forge tensorflow && \
     conda install -y -c conda-forge pandas && \
     conda install -y -c conda-forge numpy && \
-    conda install -y -c conda-forge matplotlib && \
-    conda install -y -c conda-forge scanpy && \
-    conda install -y -c conda-forge pillow && \
-    conda install -y -c conda-forge jsonpickle && \
-    conda install -y -c conda-forge requests && \
-    conda install -y -c conda-forge xmltodict && \
-    conda install -y -c conda-forge cryptography && \
-    conda install -y -c conda-forge urllib3 && \
     conda install -y -c conda-forge scipy && \
-    pip install pex && \
+    conda install -y -c conda-forge pyinstaller && \
+    conda install -y -c conda-forge mypy && \
+    conda install -y -c conda-forge pylint && \
+    conda install -y -c conda-forge flask && \
+    conda install -y -c conda-forge waitress && \
+    conda install -y -c conda-forge setuptools && \
+    conda install -y -c conda-forge tox && \
+    conda install -y -c conda-forge pipreqs && \
+    conda install -y -c conda-forge matplotlib && \
+    conda install -y -c conda-forge pillow && \
+    conda install -y -c conda-forge nptyping && \
+    conda install -y -c conda-forge jsonpickle && \
+    conda install -y -c conda-forge xmltodict && \
+    conda install -y -c conda-forge mypy && \
+    conda install -y -c conda-forge pandas-stubs && \
+    conda install -y -c conda-forge openpyxl && \
+    conda install -y -c conda-forge pillow && \
+    conda install -y -c conda-forge scanpy && \
+    conda install -y -c conda-forge cryptography && \
+    conda install -y -c conda-forge scikit-learn && \
     conda clean --all --yes && \
     chown -R :bcb_base_group /home/bcbuser && \
     chmod -R 775 /home/bcbuser
@@ -166,7 +176,7 @@ RUN echo 'RETICULATE_PYTHON="/home/bcbuser/conda/envs/gendev/bin/python3"' >> /u
 
 # install Tomcat 10, set to run as bcbuser
 ENV TOMCAT_MAJOR=10 \
-    TOMCAT_VERSION=10.1.13 \
+    TOMCAT_VERSION=10.1.25 \
     TOMCAT_HOME=/opt/tomcat \
     CATALINA_HOME=/opt/tomcat \
     CATALINA_OUT=/dev/null
