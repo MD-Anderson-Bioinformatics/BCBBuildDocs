@@ -8,7 +8,7 @@ The Dockerfile uses a Fedora 40 base. (Fedora is stable and upstream of CentOS a
 
 Search the Dockerfile for "Requirements for MBatch Python install/setup".
 
-The first run block downloads Anaconda3 from anaconda.com and installs it locally to /home/bcbuser/conda. The activate, init, and an initial update for conda are also done.
+The first run block downloads Conda3 from MiniForge and installs it locally to /home/bcbuser/conda. The activate, init, and an initial update for conda are also done.
 
 Previous OS-level requirements are installed under the first step for R. Notably, express-generator, which is used to compile Python executables, has an unpatched critical vulnerability as of this writing - do not run this image exposed to outside world.
 
@@ -17,10 +17,10 @@ Please note, we use the Conda-Forge install of conda via MiniForge. This setup u
 ```
 RUN mkdir -p /home/bcbuser && \
     cd /home/bcbuser && \
-    wget https://repo.anaconda.com/miniconda/Miniconda3-py310_23.3.1-0-Linux-x86_64.sh && \
+    curl -L -O https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh && \
     mkdir /home/bcbuser/conda && \
-    bash /home/bcbuser/Miniconda3-py310_23.3.1-0-Linux-x86_64.sh -b -p /home/bcbuser/conda -f && \
-    source /home/bcbuser/conda/bin/activate && \
+    bash /home/bcbuser/Miniforge3-Linux-x86_64.sh -b -p /home/bcbuser/conda -f && \
+    . /home/bcbuser/conda/bin/activate && \
     conda init && \
     conda update -y -n base -c conda-forge conda
 ```
